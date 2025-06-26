@@ -1,14 +1,9 @@
-import { config, configs } from "typescript-eslint";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
-import pluginNext from "@next/eslint-plugin-next";
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import pluginQuery from "@tanstack/eslint-plugin-query";
+import { config, configs } from "typescript-eslint";
 
 export default config(
-  ...pluginQuery.configs["flat/recommended"],
   eslint.configs.recommended,
   ...configs.recommendedTypeChecked,
   eslintConfigPrettier,
@@ -17,25 +12,19 @@ export default config(
       globals: {
         ...globals.node,
         ...globals.browser,
+        ...globals.jest,
       },
     },
-    plugins: {
-      "@next/next": pluginNext,
-      react: pluginReact,
-      "react-hooks": pluginReactHooks,
-    },
     rules: {
-      ...pluginNext.configs.recommended.rules,
-      ...pluginNext.configs["core-web-vitals"].rules,
       "@typescript-eslint/explicit-function-return-type": [
         "error",
         {
           allowExpressions: true,
-          allowFunctionsWithoutTypeParameters: true,
         },
       ],
 
       "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/interface-name-prefix": "off",
 
       "@typescript-eslint/naming-convention": [
         "error",
@@ -44,21 +33,12 @@ export default config(
           format: ["PascalCase"],
         },
         {
-          selector: ["interface"],
+          selector: ["interface", "typeLike"],
           format: ["PascalCase"],
 
           custom: {
             regex: "^I[A-Z]",
-            match: true,
-          },
-        },
-        {
-          selector: ["typeLike"],
-          format: ["PascalCase"],
-
-          custom: {
-            regex: "^T[A-Z]",
-            match: true,
+            match: false,
           },
         },
         {
@@ -75,17 +55,7 @@ export default config(
         },
         {
           selector: "variable",
-          format: ["camelCase", "UPPER_CASE"],
-        },
-        {
-          selector: "variable",
-          modifiers: ["const"],
-          format: ["camelCase", "PascalCase"],
-
-          filter: {
-            regex: "(Component|Context)$",
-            match: true,
-          },
+          format: ["camelCase"],
         },
         {
           selector: "variable",
@@ -112,23 +82,26 @@ export default config(
         },
       ],
 
-      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-inferrable-types": 0,
 
       "@typescript-eslint/typedef": [
         "error",
         {
+          arrayDestructuring: true,
+          arrowParameter: true,
           memberVariableDeclaration: true,
+          objectDestructuring: true,
           parameter: true,
           propertyDeclaration: true,
+          variableDeclaration: true,
+          variableDeclarationIgnoreFunction: true,
         },
       ],
 
       complexity: ["error", 10],
-
-      curly: ["error", "multi-line", "consistent"],
-
-      // Recommended rules that are, for now, disabled until the code is updated.
-      "@typescript-eslint/await-thenable": "off",
+      "sort-imports": "error",
+      "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/no-base-to-string": "off",
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-misused-promises": "off",
@@ -140,10 +113,6 @@ export default config(
       "@typescript-eslint/no-unsafe-return": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-redundant-type-constituents": "off",
-      "no-empty-pattern": "off",
-      "no-prototype-builtins": "off",
-      "no-unsafe-optional-chaining": "off",
-      "no-useless-escape": "off",
     },
   }
 );
